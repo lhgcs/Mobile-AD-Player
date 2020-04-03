@@ -5,8 +5,9 @@
 @Version: 1.0
 @Autor: lhgcs
 @Date: 2020-02-29 19:04:39
-@LastEditors: Please set LastEditors
-@LastEditTime: 2020-02-29 19:05:44
+@LastEditors: lhgcs
+@LastEditTime: 2020-04-03 13:12:47
+@FilePath: /ad-server/Mplayer.py
 '''
 
 import os
@@ -72,7 +73,7 @@ class Mplayer(object):
         if self.__isPlaying == True:
             if self.__fileName == fileName:
                 return
-            stop()
+            self.__stop()
             time.sleep(1)
 
         self.__fileName = fileName

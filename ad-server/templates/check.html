@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <link rel="shortcut icon" href="#" />
+    <meta charset="UTF-8">
+        <title>查询</title>
+    </head>
+    <body>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <style type="text/css">
+        p {color:black;font-size:16px;margin:10px;}
+        table  {color:black;font-size:16px;}
+        input  {color:black;font-size:16px;margin:10px;}
+        select {color:black;font-size:16px;padding-left:10px;padding-right:10px;padding-top:3px;padding-bottom:3px;margin:10px;}
+        span   {color:black;font-size:16px;margin:10px;}
+        .STYLE1{
+            align:center;
+            text-align:center;
+        } 
+
+        .class_form {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+    </style>
+
+    <!-- 显示查询结果（分页)  -->
+    <table align="center" id="table_page" style=" border:0px; border-style: solid; border-color: #666666;  background-color: #F5F5DC;  border-spacing:20px 10px;">
+        <tr>
+            <td class='STYLE1'>手机ID</td>\
+            <td class='STYLE1'>手机型号</td>\
+            <td class='STYLE1'>动作</td>\
+            <td class='STYLE1'>时间</td>\
+        </tr>
+    </table>
+
+    <!-- 翻页 -->
+    <p align="center">
+        <a id="btn0"></a>
+        <!-- 添加#实现A标签只产生点击事件而不刷新整个HTML -->
+        <a  href="#" id="btn1">首页</a>
+        <a  href="#" id="btn2">上一页</a>
+        <a  href="#" id="btn3">下一页</a>
+        <a  href="#" id="btn4">尾页</a> 
+        <a>转到</a>
+        <input id="changePage" type="text" value="0" size="1" maxlength="4" style="text-align:center;"/>
+        <a>页</a>
+        <a  href="#" id="btn5">跳转</a>
+    </p>
+
+    <script type="text/javascript">
+        var pageSize = 10;      // 每页显示的记录条数
+        var curPage = 1;        // 当前页为第一页 
+        var direct = 0;         // 方向
+        var page = 0;           // 总页数
+        var device = 0;
+
+        $("#btn1").click(function () {    // 首页
+            console.log("首页");
+            curPage=1;
+            direct = 0;
+            displayPage();
+	    });
+	    $("#btn2").click(function () {    // 上一页
+            console.log("上一页");
+            direct=-1;
+            displayPage();
+	    });
+	    $("#btn3").click(function () {     // 下一页
+            console.log("下一页");
+            direct=1;
+            displayPage();
+	    });
+	    $("#btn4").click(function () {     // 尾页
+            console.log("尾页");
+            curPage=page;
+            direct = 0;
+            displayPage();
+	    });
+	    $("#btn5").click(function () {   // 转页
+            console.log("转页");
+            curPage=document.getElementById("changePage").value * 1;
+            if (!/^[1-9]\d*$/.test(curPage)) {
+                alert("请输入正整数");
+                return ;
+            }
+            if (curPage > page) {
+                alert("超出数据页面");
+                return ;
+            }
+            direct = 0;
+            displayPage();
+	    });
+
+        // 获取记录个数
+        function get_page_num() {
+            $.ajax({
+                url:'/check_page_num',
+                type:'GET',      // GET
+                dataType: "json",// 数据响应格式
+                async:true,      // 或false,是否异步    
+                // 需要传递的参数
+                data: {                    
+                    pageSize: parseInt(pageSize)
+                },
+                timeout:5000,    // 超时时间
+                success:function(data) {
+                    page = data.pageNum;
+                    if(page == null) {
+                        page = 0
+                    }
+                    document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页";        // 显示当前多少页
+                    displayPage();// 显示
+                },error:function(data) {
+                    console.log("get data fail")
+                }
+            })
+        }
+
+        // 数据放入table
+        function show_table(_data) {
+            var data = eval(_data);
+            var ss = "<tr>\
+                <td class='STYLE1'>手机ID</td>\
+                <td class='STYLE1'>手机型号</td>\
+                <td class='STYLE1'>动作</td>\
+                <td class='STYLE1'>时间</td>\
+            </tr>";
+            for(var i=0;i<data.length;i++) {
+                var td1 = "<td class='STYLE1'><span class='STYLE1'>"+eval(data)[i].phoneID+"</span></td>";
+                var td2 = "<td class='STYLE1'><span class='STYLE1'>"+eval(data)[i].phoneType+"</span></td>";
+                var td3 = "<td class='STYLE1'><span class='STYLE1'>"+eval(data)[i].action+"</span></td>";
+                var td4 = "<td class='STYLE1'><span class='STYLE1'>"+eval(data)[i].time+"</span></td>";
+                ss = ss+"<tr>" + td1 + td2 + td3 + td4 + "</tr>";
+            }
+            $("#table_page").html(ss);
+        }
+
+        // 获取一页的记录
+        function get_part_data(_page, _pageSize) {
+            $.ajax({
+                url:'/check_page_data',
+                type:'GET',      // GET
+                dataType: "json",// 数据响应格式
+                async:true,      // 或false,是否异步    
+                // 需要传递的参数
+                data: {                    
+                    pageNo: parseInt(_page),
+                    pageSize: parseInt(_pageSize)
+                },
+                timeout:5000,    // 超时时间
+                success:function(data) {
+                    console.log("get data")
+                    show_table(data);
+                },error:function(data) {
+                    console.log("get data fail")
+                }
+            })
+        }
+
+        // 翻页
+        function displayPage() {
+            console.log("display")
+            if(curPage <=1 && direct==-1) {
+                direct=0;
+                alert("已经是第一页了");
+            } else if (curPage >= page && direct==1) {
+                direct=0;
+                alert("已经是最后一页了");
+            }else{
+                curPage +=direct;
+                document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页";        // 显示当前多少页
+                get_part_data(curPage,10);
+            }
+        }
+
+        <!-- 页面加载完毕后运行 -->
+        $(document).ready(function display() {
+            get_page_num();
+        });
+
+    </script>
+    </body>
+</html>

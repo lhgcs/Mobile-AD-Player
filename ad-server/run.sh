@@ -1,13 +1,14 @@
 #!/bin/bash
 
-'''
-@Description: mongodb配置
-@Version: 1.0
-@Autor: lhgcs
-@Date: 2020-02-29 19:04:39
-@LastEditors: Please set LastEditors
-@LastEditTime: 2020-02-29 17:57:57
-'''
+###
+ # @Description: mongodb配置
+ # @Version: 1.0
+ # @Autor: lhgcs
+ # @Date: 2020-02-29 19:04:39
+ # @LastEditors: lhgcs
+ # @LastEditTime: 2020-04-03 13:13:41
+ # @FilePath: /ad-server/run.sh
+ ###
 
 # 创建数据库目录
 sudo mkdir -p data/MongoDB  

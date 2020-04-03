@@ -13,7 +13,7 @@
 #### 安装教程
 
 安装mongodb：sudo apt-get install mongodb
-安装mongodb驱动：python3 -m pip3 install pymongo
+安装mongodb驱动：sudo
 安装flask：python3 -m pip3 install flask
 安装mplayer：sudo apt-get install mplayer
 
@@ -55,5 +55,3 @@ Flash服务端
 		d. 视频播放
 	3. index查看数据库
 	4. 查询结果导出
-
-
